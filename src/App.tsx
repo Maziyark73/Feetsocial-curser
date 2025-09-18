@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Feed from './pages/Feed';
+import Login from './pages/Login';
 import Profile from './pages/Profile';
 import Upload from './pages/Upload';
 import Test from './pages/Test';
@@ -13,6 +14,16 @@ import { useStore } from './store/useStore';
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { auth, login } = useStore();
+
+  useEffect(() => {
+    try {
+      const savedAuth = localStorage.getItem('isAuthenticated');
+      const savedUser = localStorage.getItem('authUser');
+      if (savedAuth === 'true' && savedUser) {
+        login(JSON.parse(savedUser));
+      }
+    } catch {}
+  }, [login]);
 
   const handleLogin = (user: any) => {
     login(user);
@@ -27,6 +38,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Feed />} />
               <Route path="/test" element={<Test />} />
+              <Route path="/login" element={<Login />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/upload" element={<Upload />} />
             </Routes>

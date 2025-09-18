@@ -69,21 +69,33 @@ export const useStore = create<AppState>((set, get) => ({
   
   setAuth: (auth) => set((state) => ({ auth: { ...state.auth, ...auth } })),
   
-  login: (user) => set((state) => ({
-    auth: {
-      ...state.auth,
-      user,
-      isAuthenticated: true,
-    },
-  })),
+  login: (user) => set((state) => {
+    try {
+      localStorage.setItem('authUser', JSON.stringify(user));
+      localStorage.setItem('isAuthenticated', 'true');
+    } catch {}
+    return {
+      auth: {
+        ...state.auth,
+        user,
+        isAuthenticated: true,
+      },
+    };
+  }),
   
-  logout: () => set((state) => ({
-    auth: {
-      ...state.auth,
-      user: null,
-      isAuthenticated: false,
-    },
-  })),
+  logout: () => set((state) => {
+    try {
+      localStorage.removeItem('authUser');
+      localStorage.removeItem('isAuthenticated');
+    } catch {}
+    return {
+      auth: {
+        ...state.auth,
+        user: null,
+        isAuthenticated: false,
+      },
+    };
+  }),
   
   // Video interactions
   likeVideo: (videoId) => set((state) => ({
